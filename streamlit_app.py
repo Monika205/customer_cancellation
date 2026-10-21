@@ -1,79 +1,101 @@
-                "Usage Difference",
-                "Total Spend",
-                "Number of Penalties",
-                "Service Tickets",
-                "Service Rating",
-                "Customer Tenure",
-                "Start Month",
-                "Start Week",
-                "Penalty Level",
-                "Fee Band",
-                "Tenure Group"
-            ],
-            "Value": [
-                territory,
-                device,
-                plan,
-                str(promotion),
-                f"{base_fee:.2f}",
-                f"{extra_spend:.2f}",
-                f"{current_usage:.2f}",
-                f"{prior_usage:.2f}",
-                f"{usage_difference:.2f}",
-                f"{total_spend:.2f}",
-                penalties,
-                tickets,
-                rating,
-                tenure,
-                month,
-                week,
-                penalty_level,
-                str(fee_band),
-                tenure_group
-            ]
-        })
 
-        st.dataframe(
-            summary,
-            use_container_width=True,
-            hide_index=True
-        )
+#Step 39
 
-        # ---------------- DOWNLOAD REPORT ----------------
-        result_text = "Churn" if prediction == 1 else "No Churn"
+import os
+import joblib
+import numpy as np
+import pandas as pd
+import streamlit as st
 
-        report = pd.DataFrame([{
-            "Prediction": result_text,
-            "Churn Probability (%)": round(probability * 100, 2),
-            "Territory": territory,
-            "DeviceType": device,
-            "PlanType": plan,
-            "Promotion": promotion,
-            "CustomerTenure": tenure,
-            "BaseFee": base_fee,
-            "AdditionalFeatureSpend": extra_spend
-        }])
-
-        st.download_button(
-            "⬇️ Download Prediction Report (CSV)",
-            data=report.to_csv(index=False).encode("utf-8"),
-            file_name="customer_churn_prediction.csv",
-            mime="text/csv"
-        )
-
-    except Exception as error:
-        st.error(f"Prediction could not be completed: {error}")
-        st.info(
-            "Check that the saved model was trained using the same "
-            "23 features, feature names, categories and preprocessing."
-        )
-
-
-# ---------------- FOOTER ----------------
-st.markdown("---")
-st.markdown(
-    '<p class="small-note">Customer Churn Intelligence · '
-    'Machine Learning Assessment Project · Predictions are decision '
-    'support estimates, not guarantees.</p>',
-    unsafe_allow_html=True
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(
+    page_title="Customer Churn Intelligence",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+
+# Find files whether they are stored in the repository root or a subfolder.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def find_first_existing(candidates):
+    """Return the first existing file path from a list of relative paths."""
+    for relative_path in candidates:
+        full_path = os.path.join(BASE_DIR, relative_path)
+        if os.path.isfile(full_path):
+            return full_path
+    return None
+
+
+MODEL_PATH = find_first_existing([
+    "customer_churn_model.joblib",
+    "customer_churn_model_v1.joblib",
+    os.path.join("saved_models", "customer_churn_model.joblib"),
+    os.path.join("saved_models", "customer_churn_model_v1.joblib"),
+])
+
+DATA_PATH = find_first_existing([
+    "Customer_Cancellations_Training.csv",
+    "Customer_Cancellations.csv",
+    "customer_cancellations.csv",
+    "customer_churn.csv",
+    os.path.join("data", "Customer_Cancellations_Training.csv"),
+    os.path.join("data", "Customer_Cancellations.csv"),
+])
+
+# If the dataset uses a different filename, search the repository for CSV files.
+if DATA_PATH is None:
+    csv_candidates = []
+    for folder in (BASE_DIR, os.path.join(BASE_DIR, "data")):
+        if os.path.isdir(folder):
+            csv_candidates.extend(
+                os.path.join(folder, name)
+                for name in os.listdir(folder)
+                if name.lower().endswith(".csv")
+            )
+    for candidate in csv_candidates:
+        try:
+            columns = set(pd.read_csv(candidate, nrows=0).columns)
+            if {"Territory", "DeviceType", "PlanType", "CustomerTenure"}.issubset(columns):
+                DATA_PATH = candidate
+                break
+        except Exception:
+            continue
+
+Chat
+
+New Chat
+Hi,
+👋
+How can I help you today?
+
+
+Explain a complex thing
+Explain Artificial Intelligence so that I can explain it to my six-year-old child.
+
+Get suggestions and create new ideas
+Please give me the best 10 travel ideas around the world
+
+Translate, summarize, fix grammar and more…
+Translate "I love you" French
+
+AITOPIA
+
+
+
+
+
+
+
+Ask me anything...
+
+Group Chat
+Web Access
+
+10
+Upgrade
+
+
+
+
