@@ -1,5 +1,4 @@
 
-@app.post("/predict")
 def predict_churn(customer: CustomerData):
     # Step 1: Convert the API input into a dictionary
     data = customer.model_dump()
