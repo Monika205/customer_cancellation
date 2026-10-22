@@ -14,7 +14,7 @@ app = FastAPI(
 
 # Load the trained model from the repository
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "customer_churn_model.joblib")
+MODEL_PATH = os.path.join(BASE_DIR, "customer_churn_model_v1 (2).joblib")
 
 model = joblib.load(MODEL_PATH)
 
