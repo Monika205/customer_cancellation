@@ -1,5 +1,4 @@
-```python
-# app.py
+
 
 import os
 import joblib
@@ -198,4 +197,3 @@ def predict_churn(customer: CustomerData):
             status_code=500,
             detail=f"Prediction error: {str(e)}"
         )
-```
